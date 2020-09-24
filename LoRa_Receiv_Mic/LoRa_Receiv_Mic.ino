@@ -21,6 +21,7 @@ const int speacker_pin = 3;
 
 
 
+
 // Async Lora Dellay = 1937 micros
 // Sync Lora Delay = 376647 micros
 // Human voice frequency:
@@ -92,7 +93,8 @@ void loop() {
       }
     }
 
-    
+
+    // Save the buffer in the sd and create 10 minutes files
     if ( check_buffer ) {
       Serial.println( "Saving data" );
       check_buffer = false;
