@@ -65,74 +65,51 @@ void setup() {
 
 
 
-int counter = 0;
-boolean check_buffer = false;
+
 
 void loop() {
+
+  // Get dimmer frequensy
+  int Hz = 700;//map( analogRead(dimmer), 0, 1023, 200, 700 ); // 200 to 700 Hz
+  long time_loop = 1000000; //  1 second in micros
+  long samples_num = (time_loop * Hz)/1000000; // micros == 1 second
+  long wait_freq = (time_loop/samples_num)-223;
+  // buffer
+  int buff[Hz];
 
 
   // Get data from Lora
   int packetSize = LoRa.parsePacket();
   if ( packetSize ) {
     
-    // Receivin and data and push it in the buffer
+    // Receiving data
     String message = "";
-    boolean check = false;
+    int counter = 0;
     while ( LoRa.available() ) {
-      message += (char) LoRa.read();
-      check = true;
+      int value = String(LoRa.read()).toInt();
+      Serial.println( value );
+      buff[counter] = value;
+      if (counter < Hz) {
+        counter++;
+      } else {
+        break;
+      }
     }
-    Serial.println( message );
-    analogWrite( speacker_pin, message.toInt() );
-    Serial.println("\n\n");
 
     
-
-    /*
-    // Receivin and data and push it in the buffer
-    String message = "";
-    boolean check = false;
-    while ( LoRa.available() ) {
-      message += (char) LoRa.read();
-      check = true;
+    // Play Data
+    int i = 0;
+    while ( i < Hz ) {
+      //Serial.println( buff[i] );
+      //analogWrite( speacker_pin, buff[i] );
+      buff[i] = 0;
+      i++;
+      long start = micros();
+      while ( (micros()-start) <= wait_freq );
     }
-    if ( check ) {
-      data[counter] = (byte) message.toInt();
-      //Serial.println( "data[" + String(counter) + "]: " + String(data[counter]) );
-      counter++;
-      if ( counter == len-1 ) {
-        //Serial.println( "Buffer Ready" );
-        check_buffer = true;
-        counter = 0;
-      }
-    }
-
-
-    // Save the buffer in the sd and create 10 minutes files
-    if ( check_buffer ) {
-      Serial.println( "Saving data" );
-      check_buffer = false;
-      // Save Data To SD
-      for ( int i = 0; i < len; i++ ) {
-        Serial.println( data[i] );
-        analogWrite(speacker_pin, (int) data[i]);
-        // SD card apend this data to file
-                ////
-      }
-    }
-    */
-      
+    
+ 
   }
-
-
-  
-
-
-
-  /*
-  Serial.println( data[counter] );
-  analogWrite(speacker_pin, data[counter]);
-  */
 
   
 }

@@ -66,9 +66,9 @@ void loop() {
 
     // Get dimmer frequensy
     int Hz = map( analogRead(dimmer), 0, 1023, 200, 700 ); // 200 to 700 Hz
-    long time_loop = 1000000 + 193000; //  1 second in micros + 238000 micros delay or Lora
+    long time_loop = 1000000; //  1 second in micros
     long samples_num = (time_loop * Hz)/1000000; // micros == 1 second
-    long wait_freq = time_loop/samples_num;
+    long wait_freq = (time_loop/samples_num)-224;
 
 
     // Loop per 1 second
@@ -77,17 +77,13 @@ void loop() {
     LoRa.beginPacket();
     while ( (micros()-startTime) <= time_loop ) {
       byte val = (byte) analogRead(mic_pin) >> 2;  // 112 micros delay
-      analogWrite(speacker_pin, val);
-      
-      
-      LoRa.print( String(val) + "&" );
-      
-      
+      analogWrite(speacker_pin, val);    
+      LoRa.print( String(val) );
       long start = micros();
       while ( (micros()-start) <= wait_freq );
       counter++;
     }
-    Serial.println( String(counter) + " smaples per second,    " + String(Hz) + " Hz." );
+    Serial.println( String(counter) + " smaples per second,    " + String(Hz) + " Hz,   "  + String(wait_freq) +  " Wait Frequncy Time." );
     LoRa.endPacket(true);
    
     
