@@ -2,6 +2,9 @@
 #include <LoRa.h>
 
 
+#define dimmer A2
+
+
 #define DI00 2
 #define PIN_SPI_RST   9
 #define PIN_SPI_SS    10
@@ -28,26 +31,8 @@ const int mic_pin = A0;
 // Femaly: 165 - 255 Hz
 
 
-// 792 Hz ==> 792 samples per 1000 millis ==> 1000 samples per 1261 millis
-int sample_loop_time = 1261; // millis
-const int samples_len = 1000;
-byte data[samples_len]; // Buffer
 
 
-
-
-/*
- *   !!!!!
- *          In Every Buffer Loop I lossing 38 Hz from LoRa
- *   !!!!!
- */
-
-
-
-
-
-// Update Lora Data
-void updateLoraData();
 
 
 
@@ -67,6 +52,7 @@ void setup() {
   //LoRa.setPreambleLength(3);
   //LoRa.crc();
   Serial.println("LoRa Sender Starts");
+  delay(1000);
 }
 
 
@@ -77,48 +63,32 @@ void setup() {
 
 void loop() {
 
-    // In every 1261 millis get 1000 samples
-    long startTime = millis();
-    int pointer = 0;
-    while ( (millis()-startTime) <= sample_loop_time ) {
-      // Get Data
-      data[pointer] = (byte) analogRead(mic_pin) >> 2; // 110 micros blocking time
-      //analogWrite(speacker_pin, (int) data[pointer]);
-      //Serial.println( "data[" + String(pointer) + "]: " + data[pointer] );
-      pointer++;
-      if ( pointer ==  samples_len-1) {
-        Serial.println("Pointer stacks");
-        break;
-      }
-    }
+
+    // Get dimmer frequensy
+    int Hz = map( analogRead(dimmer), 0, 1023, 200, 700 ); // 200 to 700 Hz
+    long time_loop = 1000000 + 193000; //  1 second in micros + 238000 micros delay or Lora
+    long samples_num = (time_loop * Hz)/1000000; // micros == 1 second
+    long wait_freq = time_loop/samples_num;
 
 
-
-    // Update Lora Data
-    updateLoraData();
-
-    
-    
-}
-
-
-
-
-
-
-
-
-
-// Update Lora Data
-void updateLoraData() {
-  analogWrite(speacker_pin, 0);
-  for ( int i = 0; i < samples_len; i++ ) {
-    Serial.println( "data[" + String(i) + "]: " + data[i] );
-    //analogWrite(speacker_pin, (int) data[i]);
+    // Loop per 1 second
+    long startTime = micros();
+    int counter = 0;
     LoRa.beginPacket();
-    LoRa.print( data[i] );
+    while ( (micros()-startTime) <= time_loop ) {
+      byte val = (byte) analogRead(mic_pin) >> 2;  // 112 micros delay
+      analogWrite(speacker_pin, val);
+      
+      
+      LoRa.print( String(val) + "&" );
+      
+      
+      long start = micros();
+      while ( (micros()-start) <= wait_freq );
+      counter++;
+    }
+    Serial.println( String(counter) + " smaples per second,    " + String(Hz) + " Hz." );
     LoRa.endPacket(true);
-    long startTime = millis();
-    while ( (millis()-startTime) <= 33 );
-  }
+   
+    
 }

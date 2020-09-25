@@ -74,7 +74,21 @@ void loop() {
   // Get data from Lora
   int packetSize = LoRa.parsePacket();
   if ( packetSize ) {
+    
+    // Receivin and data and push it in the buffer
+    String message = "";
+    boolean check = false;
+    while ( LoRa.available() ) {
+      message += (char) LoRa.read();
+      check = true;
+    }
+    Serial.println( message );
+    analogWrite( speacker_pin, message.toInt() );
+    Serial.println("\n\n");
 
+    
+
+    /*
     // Receivin and data and push it in the buffer
     String message = "";
     boolean check = false;
@@ -106,7 +120,7 @@ void loop() {
                 ////
       }
     }
-    
+    */
       
   }
 
