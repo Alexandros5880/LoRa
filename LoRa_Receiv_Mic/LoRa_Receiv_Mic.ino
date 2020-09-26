@@ -55,6 +55,7 @@ void setup() {
   LoRa.setCodingRate4(5); // 5,6,7,8
   //LoRa.setPreambleLength(3);
   //LoRa.crc();
+  delay(3000);
   Serial.println("LoRa Receiver Starts");
 }
 
@@ -62,52 +63,43 @@ void setup() {
 
 
 
-
-
-
+// Get dimmer frequensy
+int Hz = 700;
+long time_loop = 1000000; //  1 second in micros
+long samples_num = (time_loop * Hz)/1000000; // micros == 1 second
+long wait_freq = (time_loop/samples_num)-223;
+int counter = 0;
 
 
 void loop() {
 
-  // Get dimmer frequensy
-  int Hz = 700;//map( analogRead(dimmer), 0, 1023, 200, 700 ); // 200 to 700 Hz
-  long time_loop = 1000000; //  1 second in micros
-  long samples_num = (time_loop * Hz)/1000000; // micros == 1 second
-  long wait_freq = (time_loop/samples_num)-223;
-  // buffer
-  int buff[Hz];
-
+  
 
   // Get data from Lora
   int packetSize = LoRa.parsePacket();
   if ( packetSize ) {
     
     // Receiving data
-    String message = "";
-    int counter = 0;
+    String value = "";
     while ( LoRa.available() ) {
-      int value = String(LoRa.read()).toInt();
-      Serial.println( value );
-      buff[counter] = value;
-      if (counter < Hz) {
-        counter++;
-      } else {
-        break;
-      }
+      value += (char) LoRa.read();
     }
 
     
-    // Play Data
-    int i = 0;
-    while ( i < Hz ) {
-      //Serial.println( buff[i] );
-      //analogWrite( speacker_pin, buff[i] );
-      buff[i] = 0;
-      i++;
-      long start = micros();
-      while ( (micros()-start) <= wait_freq );
+    // If message contains H change the frequensy
+    if ( value.indexOf("H") > -1 ) {
+      String h = value.substring( value.indexOf("H")+1, value.length() );
+      Hz = h.toInt()+1;
+      Serial.println( "Hz changed to " + String(Hz) );
+    } else { // Now play with the values
+      
+      Serial.println( value );
+      Serial.println("\n\n");
+
+      
     }
-    
+
+
  
   }
 
