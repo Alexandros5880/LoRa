@@ -42,7 +42,7 @@ myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor,
   Serial.println( "LoRa coding_rate: " + String( coding_rate ));
   Serial.println( "LoRa preamble_length: " + String( preamble_length ));
   //delay(3000);
-  Serial.println( "LoRa Starts." );
+  Serial.println( "LoRa Starts.\n\n" );
 }
 
 
