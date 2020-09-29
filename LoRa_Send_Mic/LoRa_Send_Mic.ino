@@ -1,9 +1,4 @@
-#include <SPI.h>
-#include <LoRa.h>
-
-
-#define dimmer A2
-
+#include "myLoRa.h"
 
 #define DI00 2
 #define PIN_SPI_RST   9
@@ -13,7 +8,6 @@
 #define PIN_SPI_MISO  12
 #define PIN_SPI_SCK   13
 */
-
 
 
 
@@ -32,8 +26,23 @@ const int mic_pin = A0;
 
 
 
+// Create LoRa Object
+long frequency = 433E6;
+long bandwidth = 125E3;
+int  spreading_fuctor = 7;
+int tx_power = 0;
+int sync_word = 0;
+int coding_rate = 5;
+long preamble_length = 0;
+
+myLoRa * lora;
 
 
+
+
+
+// Helper function read pin
+byte read_pin();
 
 
 
@@ -43,63 +52,33 @@ void setup() {
   Serial.begin(115200);
   while ( ! Serial );
   // Setup Lora
-  while ( ! LoRa.begin(433E6) );  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
-  LoRa.setSpreadingFactor(7); // 6 - 12
-  LoRa.setSignalBandwidth(125E3); // 125, 250, 500
-  LoRa.setTxPower(16);  // Max 20
-  //LoRa.setSyncWord(3); // Big delay 
-  LoRa.setCodingRate4(5); // 5,6,7,8
-  //LoRa.setPreambleLength(3);
-  //LoRa.crc();
-  delay(3000);
-  Serial.println("LoRa Sender Starts");   
+  lora = &myLoRa( frequency, bandwidth, spreading_fuctor, tx_power, sync_word, coding_rate, preamble_length );
+  //lora = &myLoRa( frequency );
 }
 
 
 
 
 
-int Hz_last = 0;
 
 void loop() {
+  lora->lora_send( read_pin );
+}
 
-    
-    // Get dimmer frequensy
-    int Hz = map( analogRead(dimmer), 0, 1023, 200, 500 ); // 200 to 500 Hz
-    long time_loop = 1000000; //  1 second in micros
-    long samples_num = (time_loop * Hz)/1000000; // micros == 1 second
-    long wait_freq = (time_loop/samples_num)-336;
 
-    // If Frequensy chanched send the value
-    if ( (Hz > Hz_last+1) || (Hz < Hz_last-1) ) {
-      Hz_last = Hz;
-      Serial.println( "Send Frequensy: H" + String(Hz) );
-      LoRa.beginPacket();
-      LoRa.print("H" + String(Hz));
-      LoRa.endPacket();
-      delay(1000);
-    }
 
-    
-    // Loop per 1 second
-    long startTime = micros();
-    int counter = 0;
-    LoRa.beginPacket();
-    while ( (micros()-startTime) <= time_loop ) {
-      byte val = (byte) analogRead(mic_pin) >> 2;  // 112 micros delay
-      analogWrite(speacker_pin, val);
-      //LoRa.beginPacket();
-      LoRa.print( "&" + String(val) );
-      //LoRa.endPacket(true);
-      long start = micros();
-      while ( (micros()-start) <= wait_freq );
-      counter++;
-    }
-    LoRa.endPacket(true);
-    Serial.println( String(counter) + " smaples per second,    " 
-                                    + String(Hz) + " Hz,   "  
-                                    + String(wait_freq) 
-                                    + " micros delay per circle." );
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+// Helper function read pin
+byte read_pin() {
+  return (byte) analogRead(mic_pin) >> 2;  // 112 micros delay
 }
