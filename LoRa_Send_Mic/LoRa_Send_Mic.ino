@@ -6,6 +6,8 @@
 #include "myLoRa.h"
 
 
+#define DEBUG
+
 
 
 // Create LoRa Object
@@ -68,18 +70,23 @@ void get_data() {
   int counter = 0;
   int i = 0;
   while ( (micros()-startTime) <= time_loop ) {
-    //analogWrite(speacker_pin, analogRead(mic_pin) >> 2);
     
+    //analogWrite(speacker_pin, analogRead(mic_pin) >> 2);
+
+    // Fill buffer and then send it without LoRa
     buf[i] =  analogRead(mic_pin) >> 2;
     i++;
     if (i == len-1) {
       for (int j = 0; j < len; j++) {
-        lora->lora_send( buf[j] ); // Lora Send "i can comppes the value 2 bits down << 2"
+        lora->lora_send( String(buf[j]) ); // Lora Send "i can comppes the value 2 bits down << 2"
       }
       i = 0;
     }
     
     counter++;
   }
-  Serial.println( String(counter*2) + " Hz" );
+
+  #if defined(DEBUG)
+    Serial.println( String(counter*2) + " Hz" );
+  #endif
 }

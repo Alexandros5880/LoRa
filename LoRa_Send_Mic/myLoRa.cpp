@@ -71,6 +71,6 @@ String myLoRa::lora_receiving() {
 // LoRa send
 void myLoRa::lora_send( String val ) {
   LoRa.beginPacket();
-  LoRa.print( buf[j] );
+  LoRa.print( val );
   LoRa.endPacket(true);
 }
