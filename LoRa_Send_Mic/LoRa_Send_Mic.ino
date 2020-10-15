@@ -70,11 +70,10 @@ void get_data() {
   int counter = 0;
   int i = 0;
   while ( (micros()-startTime) <= time_loop ) {
-    
-    //analogWrite(speacker_pin, analogRead(mic_pin) >> 2);
 
     // Fill buffer and then send it without LoRa
     buf[i] =  analogRead(mic_pin) >> 2;
+    //analogWrite(speacker_pin, buf[i]);
     i++;
     if (i == len-1) {
       for (int j = 0; j < len; j++) {
