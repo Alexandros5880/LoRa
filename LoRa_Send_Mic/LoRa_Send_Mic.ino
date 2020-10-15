@@ -1,28 +1,10 @@
+#ifndef PINS_H
+#include "pins.h"
+#endif
+
+
 #include "myLoRa.h"
 
-#define DI00 2
-#define PIN_SPI_RST   9
-#define PIN_SPI_SS    10
-/*
-#define PIN_SPI_MOSI  11
-#define PIN_SPI_MISO  12
-#define PIN_SPI_SCK   13
-*/
-
-
-
-const int speacker_pin = 3;
-const int mic_pin = A0;
-
-
-
-
-
-// Async Lora Dellay = 1937 micros
-// Sync Lora Delay = 376647 micros
-// Human voice frequency:
-// Male: 85 - 180 Hz
-// Femaly: 165 - 255 Hz
 
 
 
@@ -30,7 +12,7 @@ const int mic_pin = A0;
 long frequency = 433E6;
 long bandwidth = 125E3;
 int  spreading_fuctor = 7;
-int tx_power = 0;
+int tx_power = 20;
 int sync_word = 0;
 int coding_rate = 5;
 long preamble_length = 0;
@@ -38,11 +20,11 @@ long preamble_length = 0;
 myLoRa * lora;
 
 
+// Hellper Function fill the bufer and send the data (3486 Hz)
+const int len = 250;
+int buf[len];
+void get_data();
 
-
-
-// Helper function read pin
-byte read_pin();
 
 
 
@@ -50,6 +32,8 @@ byte read_pin();
 void setup() {
   // Setup Serial
   Serial.begin(115200);
+  pinMode(mic_pin, INPUT);
+  pinMode(speacker_pin, OUTPUT);
   while ( ! Serial );
   // Setup Lora
   lora = &myLoRa( frequency, bandwidth, spreading_fuctor, tx_power, sync_word, coding_rate, preamble_length );
@@ -62,7 +46,9 @@ void setup() {
 
 
 void loop() {
-  lora->lora_send( read_pin );
+
+  get_data();
+  
 }
 
 
@@ -75,10 +61,25 @@ void loop() {
 
 
 
-
-
-
-// Helper function read pin
-byte read_pin() {
-  return (byte) analogRead(mic_pin) >> 2;  // 112 micros delay
+void get_data() {
+  long time_loop = 500000; //  0,5 second
+  // Loop per 1 second
+  long startTime = micros();
+  int counter = 0;
+  int i = 0;
+  while ( (micros()-startTime) <= time_loop ) {
+    //analogWrite(speacker_pin, analogRead(mic_pin) >> 2);
+    
+    buf[i] =  analogRead(mic_pin) >> 2;
+    i++;
+    if (i == len-1) {
+      for (int j = 0; j < len; j++) {
+        lora->lora_send( buf[j] ); // Lora Send "i can comppes the value 2 bits down << 2"
+      }
+      i = 0;
+    }
+    
+    counter++;
+  }
+  Serial.println( String(counter*2) + " Hz" );
 }

@@ -69,28 +69,8 @@ String myLoRa::lora_receiving() {
 
 
 // LoRa send
-void myLoRa::lora_send( byte (*func)() ) {
-  // Get dimmer frequensy
-  int Hz = 500;//map( analogRead(dimmer), 0, 1023, 200, 500 ); // 200 to 500 Hz
-  long time_loop = 1000000; //  1 second in micros
-  long samples_num = (time_loop * Hz)/1000000; // micros == 1 second
-  long wait_freq = (time_loop/samples_num)-265;
-  // Loop per 1 second
-  long startTime = micros();
-  int counter = 0;
+void myLoRa::lora_send( String val ) {
   LoRa.beginPacket();
-  while ( (micros()-startTime) <= time_loop ) {
-    byte val = (*func)();
-    //analogWrite(speacker_pin, val);
-    //Serial.println((int)val);
-    LoRa.print( "&" + String(val) );
-    long start = micros();
-    while ( (micros()-start) <= wait_freq );
-    counter++;
-  }
-  LoRa.endPacket();
-  Serial.println( String(counter) + " smaples per second,    " 
-                                  + String(Hz) + " Hz,   "  
-                                  + String(wait_freq) 
-                                  + " micros delay per circle." );
+  LoRa.print( buf[j] );
+  LoRa.endPacket(true);
 }
