@@ -6,8 +6,10 @@
 // Constructor
 myLoRa::myLoRa( long &frequency ) {
   while ( ! LoRa.begin(frequency) );  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
-  Serial.println( "LoRa frequency: " + String(frequency) );
-  Serial.println("LoRa Starts");
+  #if defined(DEBUG)
+    Serial.println( "LoRa frequency: " + String(frequency) );
+    Serial.println("LoRa Starts");
+  #endif
 }
 
 
@@ -62,7 +64,6 @@ void myLoRa::lora_setup() {
 String myLoRa::lora_receiving() {
   String value = "";
   int packetSize = LoRa.parsePacket();
-  //Serial.println( "Package: " + String(packetSize) );
   if ( packetSize ) {
     while ( LoRa.available() ) {
       value += (char) LoRa.read();
