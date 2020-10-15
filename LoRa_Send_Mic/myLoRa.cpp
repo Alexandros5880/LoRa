@@ -75,8 +75,8 @@ String myLoRa::lora_receiving() {
 
 
 // LoRa send
-void myLoRa::lora_send( String val ) {
-  LoRa.beginPacket();
-  LoRa.print( val );
-  LoRa.endPacket(true);
+void myLoRa::lora_send( int val[] ) {
+  //LoRa.beginPacket();
+  //LoRa.print( val );
+  //LoRa.endPacket(true);
 }

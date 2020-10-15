@@ -74,9 +74,7 @@ void get_data() {
     //analogWrite(speacker_pin, buf[i]);
     i++;
     if (i == len-1) {
-      for (int j = 0; j < len; j++) {
-        lora->lora_send( String(buf[j]) ); // Lora Send "i can comppes the value 2 bits down << 2"
-      }
+      lora->lora_send( buf );
       i = 0;
     }
     counter++;
