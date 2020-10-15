@@ -2,8 +2,8 @@
 #include <SPI.h>
 #include <LoRa.h>
 
-#ifndef PINS_H
-#include "pins.h"
+#ifndef SETUP_H
+#include "setup.h"
 #endif
 
 

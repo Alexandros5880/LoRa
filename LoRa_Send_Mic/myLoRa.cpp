@@ -15,6 +15,9 @@ myLoRa::myLoRa( long &frequency ) {
 // Constructor
 myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor, 
                 int &tx_power, int &sync_word, int &coding_rate, long &preamble_length ) {
+  #if defined(DEBUG)
+    Serial.println("LoRa Setup");
+  #endif
   while ( ! LoRa.begin(frequency) );  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
   if ( bandwidth != 0 ) {
     LoRa.setSignalBandwidth(bandwidth);
@@ -34,15 +37,17 @@ myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor,
   if ( preamble_length != 0) {
     LoRa.setPreambleLength(preamble_length);
   }
-  Serial.println( "LoRa frequency: " + String( frequency ));
-  Serial.println( "LoRa bandwidth: " + String( bandwidth ));
-  Serial.println( "LoRa spreading_fuctor: " + String( spreading_fuctor ));
-  Serial.println( "LoRa tx_power: " + String( tx_power ));
-  Serial.println( "LoRa sync_word: " + String( sync_word ));
-  Serial.println( "LoRa coding_rate: " + String( coding_rate ));
-  Serial.println( "LoRa preamble_length: " + String( preamble_length ));
-  //delay(3000);
-  Serial.println( "LoRa Starts.\n\n" );
+  #if defined(DEBUG)
+    Serial.println( "LoRa frequency: " + String( frequency ));
+    Serial.println( "LoRa bandwidth: " + String( bandwidth ));
+    Serial.println( "LoRa spreading_fuctor: " + String( spreading_fuctor ));
+    Serial.println( "LoRa tx_power: " + String( tx_power ));
+    Serial.println( "LoRa sync_word: " + String( sync_word ));
+    Serial.println( "LoRa coding_rate: " + String( coding_rate ));
+    Serial.println( "LoRa preamble_length: " + String( preamble_length ));
+    //delay(3000);
+    Serial.println( "LoRa Starts.\n" );
+  #endif
 }
 
 

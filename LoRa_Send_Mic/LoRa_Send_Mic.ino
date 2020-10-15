@@ -1,12 +1,9 @@
-#ifndef PINS_H
-#include "pins.h"
+#ifndef SETUP_H
+#include "setup.h"
 #endif
 
 
 #include "myLoRa.h"
-
-
-#define DEBUG
 
 
 
@@ -33,18 +30,20 @@ void get_data();
 
 void setup() {
   // Setup Serial
-  Serial.begin(115200);
+  #if defined(DEBUG)
+    Serial.begin(115200);
+    while ( ! Serial );
+  #endif
+  // Setip Pins
   pinMode(mic_pin, INPUT);
   pinMode(speacker_pin, OUTPUT);
-  while ( ! Serial );
   // Setup Lora
   lora = &myLoRa( frequency, bandwidth, spreading_fuctor, tx_power, sync_word, coding_rate, preamble_length );
   //lora = &myLoRa( frequency );
+  #if defined(DEBUG)
+    Serial.println("START\n\n");
+  #endif
 }
-
-
-
-
 
 
 void loop() {
@@ -64,13 +63,12 @@ void loop() {
 
 
 void get_data() {
-  long time_loop = 500000; //  0,5 second
-  // Loop per 1 second
+  // Loop per hulf of second
+  long time_loop = 500000;
   long startTime = micros();
   int counter = 0;
   int i = 0;
   while ( (micros()-startTime) <= time_loop ) {
-
     // Fill buffer and then send it without LoRa
     buf[i] =  analogRead(mic_pin) >> 2;
     //analogWrite(speacker_pin, buf[i]);
@@ -81,7 +79,6 @@ void get_data() {
       }
       i = 0;
     }
-    
     counter++;
   }
 
