@@ -21,14 +21,11 @@ myLoRa * lora;
 
 
 
-
-
-
-
 void setup() {
   // Setup Serial
   Serial.begin(115200);
   while ( ! Serial );
+  pinMode(speacker, OUTPUT);
   // Setup Lora
   lora = &myLoRa( frequency, bandwidth, spreading_fuctor, tx_power, sync_word, coding_rate, preamble_length );
   //lora = &myLoRa( frequency );
@@ -39,11 +36,25 @@ void setup() {
 
 
 
+void loop() {
 
-void loop() {  
+  
   // Get data from Lora
-  String data = lora->lora_receiving();
-  if ( data != "" ) {
-    Serial.println( data + "\n\n" );
+  char baff[len1][len2];
+  lora->lora_receiving(baff);
+
+  
+  // Print buffer
+  for (int i = 0; i < len1; i++) {
+    for (int j = 0; j < len2; j++) {
+      //int val = String(baff[i][j]).toInt();
+      //Serial.print( val );
+      //analogWrite(speacker, val);
+      Serial.print( String(baff[i][j]) );
+    }
+    Serial.println();
   }
+  
+
+
 }

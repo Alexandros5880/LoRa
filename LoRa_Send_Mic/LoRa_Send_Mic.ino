@@ -36,7 +36,7 @@ void setup() {
   #endif
   // Setip Pins
   pinMode(mic_pin, INPUT);
-  //pinMode(speacker_pin, OUTPUT);
+  pinMode(speacker, OUTPUT);
   // Setup Lora
   lora = &myLoRa( frequency, bandwidth, spreading_fuctor, tx_power, sync_word, coding_rate, preamble_length );
   //lora = &myLoRa( frequency );
@@ -70,7 +70,10 @@ void get_data() {
   int i = 0;
   while ( (micros()-startTime) <= time_loop ) {
     // Fill buffer and then send it without LoRa
-    buf[i] =  String(analogRead(mic_pin) >> 2) + "&";
+    int val = analogRead(mic_pin) >> 2;
+    //analogWrite(speacker, val);
+    //Serial.println(val);
+    buf[i] =  String(val) + "&";
     i++;
     if (i == len-1) {
       lora->lora_send( buf, len );

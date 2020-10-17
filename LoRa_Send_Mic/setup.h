@@ -1,7 +1,7 @@
 
 #define DEBUG
 
-//#define speacker_pin A3
+#define speacker A3
 #define mic_pin A0
 
 

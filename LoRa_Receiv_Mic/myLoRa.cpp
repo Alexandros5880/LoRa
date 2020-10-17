@@ -61,15 +61,43 @@ void myLoRa::lora_setup() {
 
 
 // Lora Receive
-String myLoRa::lora_receiving() {
+void myLoRa::lora_receiving(char buf[len1][len2]) {
+  
   String value = "";
+  int counter = 0;
+  
   int packetSize = LoRa.parsePacket();
   if ( packetSize ) {
     while ( LoRa.available() ) {
-      value += (char) LoRa.read();
+      char c = (char) LoRa.read();
+      if ( (c != '|') && (c != '&' ) ) {
+        value += c;
+      } else {
+        if (value != "") {
+          for (int i = 0; i < len2-1; i++) {
+            buf[counter][i] = value[i];
+          }
+          counter++;
+          if (counter == len1-1) {
+            break;
+          }
+        }
+        value = "";
+      }
     }
+    
+    /*
+    // Print buffer
+    for (int i = 0; i < len1; i++) {
+      for (int j = 0; j < len2; j++) {
+        Serial.print(String(buf[i][j]));
+      }
+      Serial.println();
+    }
+    */  
+      
   }
-  return value;
+  
 }
 
 

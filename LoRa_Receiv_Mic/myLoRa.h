@@ -17,7 +17,7 @@ class myLoRa {
 		// Setup Lora
 		void lora_setup();
 		// Lora Receive
-		String lora_receiving();
+		void lora_receiving(char buf[len1][len2]);
 		// LoRa send
 		void lora_send( String val[], int len );
 		// Helper function read pin
