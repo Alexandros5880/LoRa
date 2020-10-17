@@ -1,28 +1,9 @@
+#ifndef SETUP_H
+#include "setup.h"
+#endif
+
+
 #include "myLoRa.h"
-
-#define DI00 2
-#define PIN_SPI_RST   9
-#define PIN_SPI_SS    10
-/*
-#define PIN_SPI_MOSI  11
-#define PIN_SPI_MISO  12
-#define PIN_SPI_SCK   13
-*/
-
-
-
-const int speacker_pin = 3;
-
-
-
-
-
-
-// Async Lora Dellay = 1937 micros
-// Sync Lora Delay = 376647 micros
-// Human voice frequency:
-// Male: 85 - 180 Hz
-// Femaly: 165 - 255 Hz
 
 
 

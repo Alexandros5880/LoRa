@@ -2,7 +2,9 @@
 #include <SPI.h>
 #include <LoRa.h>
 
-
+#ifndef SETUP_H
+#include "setup.h"
+#endif
 
 
 
@@ -17,7 +19,7 @@ class myLoRa {
 		// Lora Receive
 		String lora_receiving();
 		// LoRa send
-		void lora_send( byte (*func)() );
+		void lora_send( String val[], int len );
 		// Helper function read pin
 		byte read_pin();
 };

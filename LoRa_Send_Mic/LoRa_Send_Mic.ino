@@ -11,7 +11,7 @@
 long frequency = 433E6;
 long bandwidth = 125E3;
 int  spreading_fuctor = 7;
-int tx_power = 20;
+int tx_power = 10;
 int sync_word = 0;
 int coding_rate = 5;
 long preamble_length = 0;
@@ -20,7 +20,7 @@ myLoRa * lora;
 
 
 // Hellper Function fill the bufer and send the data (3486 Hz)
-const int len = 100;
+const int len = 60;
 String buf[len];
 void get_data();
 

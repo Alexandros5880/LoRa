@@ -48,7 +48,7 @@ myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor,
     Serial.println( "LoRa coding_rate: " + String( coding_rate ) );
     Serial.println( "LoRa preamble_length: " + String( preamble_length ) );
     //delay(3000);
-    Serial.println( "LoRa Starts.\n" );
+    Serial.println( "\nLoRa Starts.\n" );
   #endif
 }
 
@@ -76,21 +76,21 @@ String myLoRa::lora_receiving() {
 
 // LoRa send
 void myLoRa::lora_send( String val[], int len ) {
-  // dividing my array in smaller arrays
-  for (int j = 10; j < 50; j += 10) {
-    if ( (len % j) == 0 ) {
-      int divider = len/j;
-      String line = "";
-      for (int i = 0; i < len; i++) {
-        line += val[i];
-        if ( (i % divider) == 0 ) {
-          LoRa.beginPacket();
-          LoRa.print( line );
-          //Serial.println(line);
-          LoRa.endPacket(true);
-          line = "";
-        }
-      }
+
+  int divider = len/10;
+  String line = "";
+  int counter = 0;
+  for (int i = 0; i < len; i++) {
+    line += val[i];
+    if ( (i % divider) == 0 ) {
+      LoRa.beginPacket();
+      line =  "<" + String(counter) + ">" + line ;
+      LoRa.print( line );
+      //Serial.println( line );
+      LoRa.endPacket(true);
+      line = "";
+      counter++;
     }
   }
+  
 }
