@@ -8,7 +8,7 @@ myLoRa::myLoRa( long &frequency ) {
   while ( ! LoRa.begin(frequency) );  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
   #if defined(DEBUG)
     Serial.println( "LoRa frequency: " + String(frequency) );
-    Serial.println("LoRa Starts");
+    Serial.println("LoRa Starts.\n");
   #endif
 }
 
@@ -18,7 +18,7 @@ myLoRa::myLoRa( long &frequency ) {
 myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor, 
                 int &tx_power, int &sync_word, int &coding_rate, long &preamble_length ) {
   #if defined(DEBUG)
-    Serial.println("LoRa Setup");
+    Serial.println("LoRa Setup\n");
   #endif
   while ( ! LoRa.begin(frequency) );  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
   if ( bandwidth != 0 ) {
@@ -40,13 +40,13 @@ myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor,
     LoRa.setPreambleLength(preamble_length);
   }
   #if defined(DEBUG)
-    Serial.println( "LoRa frequency: " + String( frequency ));
-    Serial.println( "LoRa bandwidth: " + String( bandwidth ));
-    Serial.println( "LoRa spreading_fuctor: " + String( spreading_fuctor ));
-    Serial.println( "LoRa tx_power: " + String( tx_power ));
-    Serial.println( "LoRa sync_word: " + String( sync_word ));
-    Serial.println( "LoRa coding_rate: " + String( coding_rate ));
-    Serial.println( "LoRa preamble_length: " + String( preamble_length ));
+    Serial.println( "LoRa frequency: " + String( frequency ) );
+    Serial.println( "LoRa bandwidth: " + String( bandwidth ) );
+    Serial.println( "LoRa spreading_fuctor: " + String( spreading_fuctor ) );
+    Serial.println( "LoRa tx_power: " + String( tx_power ) );
+    Serial.println( "LoRa sync_word: " + String( sync_word ) );
+    Serial.println( "LoRa coding_rate: " + String( coding_rate ) );
+    Serial.println( "LoRa preamble_length: " + String( preamble_length ) );
     //delay(3000);
     Serial.println( "LoRa Starts.\n" );
   #endif
@@ -75,8 +75,22 @@ String myLoRa::lora_receiving() {
 
 
 // LoRa send
-void myLoRa::lora_send( int val[] ) {
-  //LoRa.beginPacket();
-  //LoRa.print( val );
-  //LoRa.endPacket(true);
+void myLoRa::lora_send( String val[], int len ) {
+  // dividing my array in smaller arrays
+  for (int j = 10; j < 50; j += 10) {
+    if ( (len % j) == 0 ) {
+      int divider = len/j;
+      String line = "";
+      for (int i = 0; i < len; i++) {
+        line += val[i];
+        if ( (i % divider) == 0 ) {
+          LoRa.beginPacket();
+          LoRa.print( line );
+          //Serial.println(line);
+          LoRa.endPacket(true);
+          line = "";
+        }
+      }
+    }
+  }
 }

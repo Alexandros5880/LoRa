@@ -20,8 +20,8 @@ myLoRa * lora;
 
 
 // Hellper Function fill the bufer and send the data (3486 Hz)
-const int len = 250;
-int buf[len];
+const int len = 100;
+String buf[len];
 void get_data();
 
 
@@ -36,7 +36,7 @@ void setup() {
   #endif
   // Setip Pins
   pinMode(mic_pin, INPUT);
-  pinMode(speacker_pin, OUTPUT);
+  //pinMode(speacker_pin, OUTPUT);
   // Setup Lora
   lora = &myLoRa( frequency, bandwidth, spreading_fuctor, tx_power, sync_word, coding_rate, preamble_length );
   //lora = &myLoRa( frequency );
@@ -70,11 +70,10 @@ void get_data() {
   int i = 0;
   while ( (micros()-startTime) <= time_loop ) {
     // Fill buffer and then send it without LoRa
-    buf[i] =  analogRead(mic_pin) >> 2;
-    //analogWrite(speacker_pin, buf[i]);
+    buf[i] =  String(analogRead(mic_pin) >> 2) + "&";
     i++;
     if (i == len-1) {
-      lora->lora_send( buf );
+      lora->lora_send( buf, len );
       i = 0;
     }
     counter++;
