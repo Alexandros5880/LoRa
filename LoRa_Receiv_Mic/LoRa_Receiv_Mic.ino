@@ -40,21 +40,7 @@ void loop() {
 
   
   // Get data from Lora
-  char baff[len1][len2];
-  lora->lora_receiving(baff);
-
-  
-  // Print buffer
-  for (int i = 0; i < len1; i++) {
-    String val = "";
-    for (int j = 0; j < len2; j++) {
-      val += String(baff[i][j]);
-      //Serial.print( String(baff[i][j]) );
-    }
-    Serial.println( val );
-    analogWrite(speacker, val.toInt());
-  }
-  
+  lora->lora_receiving();
 
 
 }

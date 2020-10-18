@@ -17,9 +17,12 @@ class myLoRa {
 		// Setup Lora
 		void lora_setup();
 		// Lora Receive
-		void lora_receiving(char buf[len1][len2]);
+		void lora_receiving();
 		// LoRa send
-		void lora_send( String val[], int len );
+		void lora_send( String val );
 		// Helper function read pin
 		byte read_pin();
+
+  private:
+    static int pointer;
 };

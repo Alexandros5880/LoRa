@@ -1,6 +1,8 @@
 #include "myLoRa.h"
 
 
+// Static Vriable
+int myLoRa::pointer = 0;
 
 
 // Constructor
@@ -61,41 +63,25 @@ void myLoRa::lora_setup() {
 
 
 // Lora Receive
-void myLoRa::lora_receiving(char buf[len1][len2]) {
-  
-  String value = "";
-  int counter = 0;
-  
+void myLoRa::lora_receiving() {
+
   int packetSize = LoRa.parsePacket();
   if ( packetSize ) {
+    String value = "";
     while ( LoRa.available() ) {
       char c = (char) LoRa.read();
       if (c != '&' ) {
         value += c;
       } else {
-        if (value != "") {
-          for (int i = 0; i < len2-1; i++) {
-            buf[counter][i] = value[i];
-          }
-          counter++;
-          if (counter == len1-1) {
-            break;
-          }
-        }
+        myLoRa::pointer++;
+        #if defined(DEBUG)
+          Serial.print("Pointer: " + String(myLoRa::pointer) + "  Value: ");
+        #endif
+        Serial.println(value);
+        analogWrite(speacker, value.toInt());
         value = "";
       }
-    }
-    
-    /*
-    // Print buffer
-    for (int i = 0; i < len1; i++) {
-      for (int j = 0; j < len2; j++) {
-        Serial.print(String(buf[i][j]));
-      }
-      Serial.println();
-    }
-    */  
-      
+    } 
   }
   
 }
@@ -103,22 +89,8 @@ void myLoRa::lora_receiving(char buf[len1][len2]) {
 
 
 // LoRa send
-void myLoRa::lora_send( String val[], int len ) {
-  // dividing my array in smaller arrays
-  for (int j = 10; j < 50; j += 10) {
-    if ( (len % j) == 0 ) {
-      int divider = len/j;
-      String line = "";
-      for (int i = 0; i < len; i++) {
-        line += val[i];
-        if ( (i % divider) == 0 ) {
-          LoRa.beginPacket();
-          LoRa.print( line );
-          //Serial.println(line);
-          LoRa.endPacket(true);
-          line = "";
-        }
-      }
-    }
-  }
+void myLoRa::lora_send( String val ) {
+  LoRa.beginPacket();
+  LoRa.print( val );
+  LoRa.endPacket(true);
 }
