@@ -70,7 +70,7 @@ void myLoRa::lora_receiving(char buf[len1][len2]) {
   if ( packetSize ) {
     while ( LoRa.available() ) {
       char c = (char) LoRa.read();
-      if ( (c != '|') && (c != '&' ) ) {
+      if (c != '&' ) {
         value += c;
       } else {
         if (value != "") {

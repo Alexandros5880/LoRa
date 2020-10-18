@@ -46,13 +46,13 @@ void loop() {
   
   // Print buffer
   for (int i = 0; i < len1; i++) {
+    String val = "";
     for (int j = 0; j < len2; j++) {
-      //int val = String(baff[i][j]).toInt();
-      //Serial.print( val );
-      //analogWrite(speacker, val);
-      Serial.print( String(baff[i][j]) );
+      val += String(baff[i][j]);
+      //Serial.print( String(baff[i][j]) );
     }
-    Serial.println();
+    Serial.println( val );
+    analogWrite(speacker, val.toInt());
   }
   
 

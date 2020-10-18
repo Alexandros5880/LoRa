@@ -19,9 +19,7 @@ long preamble_length = 0;
 myLoRa * lora;
 
 
-// Hellper Function fill the bufer and send the data (3486 Hz)
-const int len = 60;
-String buf[len];
+// Hellper Function send real time data
 void get_data();
 
 
@@ -67,21 +65,17 @@ void get_data() {
   long time_loop = 500000;
   long startTime = micros();
   int counter = 0;
-  int i = 0;
   while ( (micros()-startTime) <= time_loop ) {
     // Fill buffer and then send it without LoRa
     int val = analogRead(mic_pin) >> 2;
-    //analogWrite(speacker, val);
-    //Serial.println(val);
-    buf[i] =  String(val) + "&";
-    i++;
-    if (i == len-1) {
-      lora->lora_send( buf, len );
-      i = 0;
-    }
+    analogWrite(speacker, val);
+    #if defined(DEBUG)
+      Serial.println(val);
+    #endif
+    // LoRa send data
+    lora->lora_send( String(val) + "&" );
     counter++;
   }
-
   #if defined(DEBUG)
     Serial.println( String(counter*2) + " Hz" );
   #endif

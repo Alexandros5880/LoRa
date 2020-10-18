@@ -75,20 +75,8 @@ String myLoRa::lora_receiving() {
 
 
 // LoRa send
-void myLoRa::lora_send( String val[], int len ) {
-
-  int divider = len/10;
-  String line = "";
-  for (int i = 0; i < len; i++) {
-    line += val[i];
-    if ( (i % divider) == 0 ) {
-      LoRa.beginPacket();
-      line =  "|" + line ;
-      LoRa.print( line );
-      //Serial.println( line );
-      LoRa.endPacket(true);
-      line = "";
-    }
-  }
-  
+void myLoRa::lora_send( String val ) {
+  LoRa.beginPacket();
+  LoRa.print( val );
+  LoRa.endPacket(true);
 }

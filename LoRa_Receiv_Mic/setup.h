@@ -1,9 +1,9 @@
 
 //#define DEBUG
 
-//#define speacker_pin A3
-#define mic_pin A0
-#define speacker A3
+
+//#define mic_pin A0
+#define speacker A0
 
 // Receiver buffer length " buff[len1][len2] "
 #define len1 61
