@@ -24,5 +24,5 @@ class myLoRa {
 		byte read_pin();
 
   private:
-    static int pointer;
+    static signed long pointer;
 };

@@ -2,7 +2,7 @@
 
 
 // Static Vriable
-int myLoRa::pointer = 0;
+static signed long myLoRa::pointer = 0;
 
 
 // Constructor
@@ -77,8 +77,9 @@ void myLoRa::lora_receiving() {
         #if defined(DEBUG)
           Serial.print("Pointer: " + String(myLoRa::pointer) + "  Value: ");
         #endif
-        Serial.println(value);
-        analogWrite(speacker, value.toInt());
+        int val = value.toInt();
+        Serial.println(val);
+        analogWrite(speacker, val);
         value = "";
       }
     } 

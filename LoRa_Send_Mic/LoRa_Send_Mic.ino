@@ -13,7 +13,7 @@ long bandwidth = 125E3;
 int  spreading_fuctor = 7;
 int tx_power = 10;
 int sync_word = 0;
-int coding_rate = 5;
+int coding_rate = 1;
 long preamble_length = 0;
 
 myLoRa * lora;
@@ -70,7 +70,7 @@ void get_data() {
     int val = analogRead(mic_pin) >> 2;
     analogWrite(speacker, val);
     #if defined(DEBUG)
-      Serial.println(val);
+      //Serial.println(val);
     #endif
     // LoRa send data
     lora->lora_send( String(val) + "&" );
