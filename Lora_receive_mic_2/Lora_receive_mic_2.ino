@@ -70,13 +70,19 @@ void setup() {
   Serial.println( "\nLoRa Starts.\n" );
 }
 
+
+
+
 void loop() {
   int packetSize = LoRa.parsePacket();
   if ( packetSize ) {
+    int counter = 0;
     while ( LoRa.available() ) {
-      int val = (int) LoRa.read();
-      Serial.println(val);
+      uint8_t val = (uint8_t) LoRa.read();
+      Serial.println("Counter: " + String(counter) + "  val: " + String(val) + "\n");
       analogWrite(speacker, val);
+      counter++;
     }
+    delay(300);
   }
 }
