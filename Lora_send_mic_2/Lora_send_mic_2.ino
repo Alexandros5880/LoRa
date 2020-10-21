@@ -3,6 +3,7 @@
 
 
 //#define ADC_T
+//#defined BUFFER
 
 #define speacker A3
 #define mic A0
@@ -29,21 +30,17 @@ int coding_rate = 1;
 long preamble_length = 0;
 
 
-#if defined(ADC_T)
-  boolean * check_buf = new boolean(false);
-#endif
 
 
-
-const int db_len = 250;
-uint8_t dbs[db_len];
-
+const int buf_len = 250;
+uint8_t buf[buf_len];
+int pointer = 0;
 
 
 
 void clear_buff() {
-  for (int i = 0; i < sizeof(dbs); i++) {
-    dbs[i] = 0;
+  for (int i = 0; i < sizeof(buf); i++) {
+    buf[i] = 0;
   }
 }
 
@@ -54,7 +51,9 @@ void setup() {
   while ( ! Serial );
   // Setip Pins
   pinMode(mic, INPUT);
-  pinMode(speacker, OUTPUT);
+  #if defined(SPEACKER)
+    pinMode(speacker, OUTPUT);
+  #endif
   // SETUP ADC CLOCK
   #if defined(ADC_T)
     cli();//disable interrupts
@@ -105,44 +104,51 @@ void setup() {
 #if defined(ADC_T)
   // when new ADC value ready
   ISR(ADC_vect) {
-    int counter = 0;
-    *check_buf = false;
-    while ( counter < db_len ) {
-      dbs[counter] = ADCH;
-      //dbs[counter] = ADCH;
-      //Serial.println(dbs[counter]);
-      //analogWrite(speacker, dbs[counter]);
-      counter ++;
+    long start = micros();
+    if ( pointer == buf_len-1 ) {
+      // LoRa Send
+      LoRa.beginPacket();
+      LoRa.write(buf, sizeof(buf));
+      LoRa.endPacket(true);
+      pointer = 0;
     }
-    *check_buf = true;
+    buf[pointer] = (uint8_t) ADCH;
+    analogWrite(speacker, (int) buf[pointer]);
+    Serial.println( "Val: " + String((int) buf[pointer]) + "  " + String( 1000000/(micros()-start) ) + " hz\n" );
+    pointer++;
   }
 #endif
 
 
+
+
+
 void loop() {
-  
-  #if ! defined(ADC_T)
-    int counter = 0;
-    while ( counter < db_len ) {
-      dbs[counter] = map(analogRead(mic), 0, 1023, 0, 250);
-      //dbs[counter] =analogRead(mic) << 2;
-      Serial.println(dbs[counter]);
-      analogWrite(speacker, dbs[counter]);
-      counter ++;
+
+  #if ! defined(ADC_T) and defined(BUFFER)
+    long start = micros();
+    if ( pointer == buf_len-1 ) {
+      // LoRa Send
+      LoRa.beginPacket();
+      LoRa.write(buff, sizeof(buf));
+      LoRa.endPacket(true);
+      pointer = 0;
     }
+    //buf[pointer] = map(analogRead(mic), 0, 1023, 0, 250);
+    dbs[pointer] = (uint8_t) analogRead(mic) >> 2;
+    analogWrite(speacker, (int)dbs[pointer]);
+    Serial.println((int)dbs[pointer]);
+    Serial.println( String( 1000000/(micros()-start) ) + " hz" );
+    pointer++;
+  #else if ! defined(ADC_T) and ! defined(BUFFER)
+    long start = micros();
+    int val = (int)analogRead(mic) >> 2;
+    analogWrite(speacker, val);
     // LoRa Send
     LoRa.beginPacket();
-    LoRa.write(dbs, sizeof(dbs));
+    LoRa.print(String(val) + "&");
     LoRa.endPacket(true);
-    clear_buff();
-  #else
-    // LoRa Send
-    if( check_buf ) {
-      LoRa.beginPacket();
-      LoRa.write(dbs, sizeof(dbs));
-      LoRa.endPacket(true);
-      clear_buff();
-    }
+    Serial.println( "Val: " + String(val) + "   " + String( 1000000/(micros()-start) ) + " hz" );
   #endif
   
 }

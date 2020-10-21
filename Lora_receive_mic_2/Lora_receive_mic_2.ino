@@ -72,17 +72,25 @@ void setup() {
 
 
 
-
+int counter = 0;
+int Hz = 2750;
 void loop() {
   int packetSize = LoRa.parsePacket();
   if ( packetSize ) {
-    int counter = 0;
+    String value = "";
     while ( LoRa.available() ) {
-      uint8_t val = (uint8_t) LoRa.read();
-      Serial.println("Counter: " + String(counter) + "  val: " + String(val) + "\n");
-      analogWrite(speacker, val);
-      counter++;
+      char val = LoRa.read();
+      if (val != '&') {
+        value += val;
+      } else {
+        Serial.println("Counter: " + String(counter) + "  val: " + value + "\n");
+        analogWrite(speacker, value.toInt());
+        counter++;
+        if (counter == 2750) { // Here we have saved 1 second speacking
+          counter = 0;
+        }
+        value = "";
+      }
     }
-    delay(300);
   }
 }
