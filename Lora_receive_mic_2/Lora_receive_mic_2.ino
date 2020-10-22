@@ -59,6 +59,7 @@ void setup() {
   if ( preamble_length != 0) {
     LoRa.setPreambleLength(preamble_length);
   }
+  /*
   Serial.println( "LoRa frequency: " + String( frequency ) );
   Serial.println( "LoRa bandwidth: " + String( bandwidth ) );
   Serial.println( "LoRa spreading_fuctor: " + String( spreading_fuctor ) );
@@ -68,12 +69,13 @@ void setup() {
   Serial.println( "LoRa preamble_length: " + String( preamble_length ) );
   //delay(3000);
   Serial.println( "\nLoRa Starts.\n" );
+  */
 }
 
 
 
-int counter = 0;
-int Hz = 3000; // 1 second
+//int counter = 0;
+int Hz = 3000; // 1 second * 6 seconds
 void loop() {
   int packetSize = LoRa.parsePacket();
   if ( packetSize ) {
@@ -83,12 +85,7 @@ void loop() {
       if (val != '&') {
         value += val;
       } else {
-        Serial.println("Counter: " + String(counter) + "  val: " + value + "\n");
-        //analogWrite(speacker, value.toInt());
-        counter++;
-        if (counter == Hz) { // Here we have saved 1 second speacking
-          counter = 0;
-        }
+        Serial.println( value );
         value = "";
       }
     }
