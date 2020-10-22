@@ -5,7 +5,7 @@
 //#define ADC_T
 //#defined BUFFER
 
-#define speacker A3
+#define speacker A2
 #define mic A0
 
 
@@ -51,9 +51,7 @@ void setup() {
   while ( ! Serial );
   // Setip Pins
   pinMode(mic, INPUT);
-  #if defined(SPEACKER)
-    pinMode(speacker, OUTPUT);
-  #endif
+  pinMode(speacker, OUTPUT);
   // SETUP ADC CLOCK
   #if defined(ADC_T)
     cli();//disable interrupts
