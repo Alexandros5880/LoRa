@@ -2,20 +2,25 @@
 
 // Constructor
 myLoRa::myLoRa( long &frequency ) {
-  while ( ! LoRa.begin(frequency) );  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
-  #if defined(DEBUG)
-    Serial.println( "LoRa frequency: " + String(frequency) );
-    Serial.println("LoRa Starts.\n");
-  #endif
+  while ( ! LoRa.begin(frequency) ) { 
+    Serial.print(".");
+    delay(1000);
+  };  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
+  Serial.println( "LoRa frequency: " + String(frequency) );
+  Serial.println("LoRa Starts.\n");
 }
 
 // Constructor
 myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor, 
                 int &tx_power, int &sync_word, int &coding_rate, long &preamble_length ) {
-  #if defined(DEBUG)
-    Serial.println("LoRa Setup\n");
-  #endif
-  while ( ! LoRa.begin(frequency) );  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
+  
+  Serial.println("LoRa Setup\n");
+  
+  while ( ! LoRa.begin(frequency) ) { 
+    Serial.print(".");
+    delay(1000);
+  };  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
+  
   if ( bandwidth != 0 ) {
     LoRa.setSignalBandwidth(bandwidth);
   }
@@ -34,17 +39,16 @@ myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor,
   if ( preamble_length != 0) {
     LoRa.setPreambleLength(preamble_length);
   }
-  #if defined(DEBUG)
-    Serial.println( "LoRa frequency: " + String( frequency ) );
-    Serial.println( "LoRa bandwidth: " + String( bandwidth ) );
-    Serial.println( "LoRa spreading_fuctor: " + String( spreading_fuctor ) );
-    Serial.println( "LoRa tx_power: " + String( tx_power ) );
-    Serial.println( "LoRa sync_word: " + String( sync_word ) );
-    Serial.println( "LoRa coding_rate: " + String( coding_rate ) );
-    Serial.println( "LoRa preamble_length: " + String( preamble_length ) );
-    //delay(3000);
-    Serial.println( "\nLoRa Starts.\n" );
-  #endif
+  
+  Serial.println( "LoRa frequency: " + String( frequency ) );
+  Serial.println( "LoRa bandwidth: " + String( bandwidth ) );
+  Serial.println( "LoRa spreading_fuctor: " + String( spreading_fuctor ) );
+  Serial.println( "LoRa tx_power: " + String( tx_power ) );
+  Serial.println( "LoRa sync_word: " + String( sync_word ) );
+  Serial.println( "LoRa coding_rate: " + String( coding_rate ) );
+  Serial.println( "LoRa preamble_length: " + String( preamble_length ) );
+  delay(3000);
+  Serial.println( "\nLoRa Starts.\n" );
 }
 
 // Lora Receive
@@ -78,6 +82,8 @@ void myLoRa::lora_send( String val[], int len ) {
 
 void myLoRa::lora_send( String val ) {
   LoRa.beginPacket();
+  Serial.print("Sending: ");
+  Serial.println(val);
   LoRa.print( val );
   LoRa.endPacket(true);
 }

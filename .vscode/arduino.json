@@ -1,5 +1,6 @@
 {
     "configuration": "cpu=atmega328",
     "board": "arduino:avr:nano",
-    "sketch": "Lora_Send_Temperature\\Lora_Send_Temperature.ino"
+    "sketch": "Lora_Send_Temperature\\Lora_Send_Temperature.ino",
+    "port": "COM6"
 }
