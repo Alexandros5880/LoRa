@@ -1,8 +1,5 @@
-
 #include <SPI.h>
 #include <LoRa.h>
-
-
 
 #define DI00 2
 #define PIN_SPI_RST   9
@@ -13,24 +10,13 @@
 #define PIN_SPI_SCK   13
 */
 
-
-
-
-
-
-
 // Async delay
 void _delay(int m);
-
 
 // Get Theperature
 #define pinThemp A1
 float getTemp();
 float temp = 0.0, last_temp = 0.0;
-
-
-
-
 
 void setup() {
   // Setup Serial
@@ -49,10 +35,6 @@ void setup() {
   Serial.println("LoRa Sender Starts");
 }
 
-
-
-
-
 void loop() {
     
   temp = getTemp();
@@ -65,20 +47,11 @@ void loop() {
 
 }
 
-
-
-
-
-
-
-
-
 // Real Time Delay
 void _delay(int m) {
   unsigned long wait = millis()+m;
   while(millis() < wait);
 }
-
 
 // Get themperature   10 sample per second
 float getTemp() {
