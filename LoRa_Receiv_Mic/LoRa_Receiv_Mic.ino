@@ -1,105 +1,45 @@
-#include <SPI.h>
-#include <LoRa.h>
+#ifndef SETUP_H
+#include "setup.h"
+#endif
 
+#include "myLoRa.h"
 
-#include <Thread.h>
-#include <StaticThreadController.h>
+// Create LoRa Object
+long frequency = 433E6;
+long bandwidth = 125E3;
+int  spreading_fuctor = 7;
+int tx_power = 0;
+int sync_word = 0;
+int coding_rate = 5;
+long preamble_length = 0;
 
+myLoRa * lora;
 
-
-
-
-
-#define DI00 2
-#define PIN_SPI_RST   9
-#define PIN_SPI_SS    10
-/*
-#define PIN_SPI_MOSI  11
-#define PIN_SPI_MISO  12
-#define PIN_SPI_SCK   13
-*/
-
-
-
-const int speacker_pin = 3;
-
-
-
-
-
-
-
-void setup() { 
+void setup() {
   // Setup Serial
   Serial.begin(115200);
   while ( ! Serial );
+  pinMode(speacker, OUTPUT);
   // Setup Lora
-  while ( ! LoRa.begin(433E6) );  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
-  LoRa.setSpreadingFactor(7); // 6 - 12
-  LoRa.setSignalBandwidth(125E3); // 125, 250, 500
-  LoRa.setTxPower(16);  // Max 20
-  //LoRa.setSyncWord(3); // Big delay 
-  LoRa.setCodingRate4(5); // 5,6,7,8
-  //LoRa.setPreambleLength(3);
-  //LoRa.crc();
-  Serial.println("LoRa Receiver Starts");
+  lora = &myLoRa( frequency, bandwidth, spreading_fuctor, tx_power, sync_word, coding_rate, preamble_length );
+  //lora = &myLoRa( frequency );
 }
 
-
-
-
-
-
-
-
-
-
-// 500 Hz
-int wait = 2000;
-long previusTime = 0, currentTime = 0;
-int counter = 0;
-const int len = 100;
-String data[len];
-
-
 void loop() {
-
-  //long startTime = micros();
-
-
+  
   // Get data from Lora
-  int packetSize = LoRa.parsePacket();
-  if ( packetSize ) {
-    String message = "";
-    while ( LoRa.available() ) {
-      char c = (char) LoRa.read();
-      if (c != '&') {
-        data[counter] += c;
-      } else {
-        counter++;
-      }
-      if ( counter == len ){
-        break;
-      }
+  char baff[len1][len2];
+  lora->lora_receiving(baff);
+  
+  // Print buffer
+  for (int i = 0; i < len1; i++) {
+    for (int j = 0; j < len2; j++) {
+      //int val = String(baff[i][j]).toInt();
+      //Serial.print( val );
+      //analogWrite(speacker, val);
+      Serial.print( String(baff[i][j]) );
     }
+    Serial.println();
   }
 
-
-
-  // Print data
-  for ( int i = 0; i < len; i++ ) {
-    Serial.println( data[i] );
-  }
-  
-  /*
-  // Play 500 Hz
-  currentTime = micros();
-  if ( (currentTime - previusTime) >= wait ) {
-    previusTime = currentTime;
-    Serial.println( message );
-    analogWrite( speacker_pin, message.toInt() );
-  }
-  */
-  
-  //Serial.println( "Time: " + String(micros()-startTime) );
 }

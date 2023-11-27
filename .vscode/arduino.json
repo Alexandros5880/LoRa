@@ -1,0 +1,5 @@
+{
+    "configuration": "cpu=atmega328",
+    "board": "arduino:avr:nano",
+    "sketch": "Lora_Send_Temperature\\Lora_Send_Temperature.ino"
+}
