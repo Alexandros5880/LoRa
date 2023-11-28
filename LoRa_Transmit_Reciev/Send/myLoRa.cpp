@@ -1,6 +1,5 @@
 #include "myLoRa.h"
 
-// Constructor
 myLoRa::myLoRa( long &frequency ) {
   while ( ! LoRa.begin(frequency) ) { 
     Serial.print(".");
@@ -10,7 +9,6 @@ myLoRa::myLoRa( long &frequency ) {
   Serial.println("LoRa Starts.\n");
 }
 
-// Constructor
 myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor, 
                 int &tx_power, int &sync_word, int &coding_rate, long &preamble_length ) {
   
@@ -51,7 +49,6 @@ myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor,
   Serial.println( "\nLoRa Starts.\n" );
 }
 
-// Lora Receive
 String myLoRa::lora_receiving() {
   String value = "";
   int packetSize = LoRa.parsePacket();
@@ -63,14 +60,22 @@ String myLoRa::lora_receiving() {
   return value;
 }
 
-// LoRa send
-void myLoRa::lora_send( String val[], int len ) {
+String myLoRa::lora_receiving_str() {
+  String value = "";
+  int packetSize = LoRa.parsePacket();
+  if ( packetSize ) {
+    value = LoRa.readString();
+  }
+  return value;
+}
+
+void myLoRa::lora_send( String val[], int len, int implicitHeader = false ) {
   int divider = len/10;
   String line = "";
   for (int i = 0; i < len; i++) {
     line += val[i];
     if ( (i % divider) == 0 ) {
-      LoRa.beginPacket();
+      LoRa.beginPacket(implicitHeader);
       line =  "|" + line ;
       LoRa.print( line );
       //Serial.println( line );
@@ -80,10 +85,20 @@ void myLoRa::lora_send( String val[], int len ) {
   }
 }
 
-void myLoRa::lora_send( String val ) {
-  LoRa.beginPacket();
+void myLoRa::lora_send( String data, int implicitHeader = false ) {
+  LoRa.beginPacket(implicitHeader);
   Serial.print("Sending: ");
-  Serial.println(val);
-  LoRa.print( val );
+  Serial.println(data);
+  LoRa.print( data );
+  LoRa.endPacket(true);
+}
+
+void myLoRa::lora_send( const char * data, int implicitHeader = false ) {
+  LoRa.beginPacket(implicitHeader);
+  Serial.print("Sending: ");
+  Serial.println(data);
+  for (byte i = 0; i < strlen(data) - 1; i++) {
+    LoRa.write(data[i]);
+  }
   LoRa.endPacket(true);
 }

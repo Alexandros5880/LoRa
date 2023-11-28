@@ -14,9 +14,12 @@ class myLoRa {
                 int &tx_power, int &sync_word, int &coding_rate, long &preamble_length );
 		// Lora Receive
 		String lora_receiving();
+    String lora_receiving_str();
 		// LoRa send
-		void lora_send( String val[], int len );
-    void lora_send( String val );
+		void lora_send( String val[], int len, int implicitHeader = false );
+    void lora_send( String val, int implicitHeader = false );
+    void lora_send( const char * data, int implicitHeader = false );
 		// Helper function read pin
 		byte read_pin();
 };
+
