@@ -7,10 +7,10 @@
 // Create LoRa Object
 long frequency = 43305E4;
 long bandwidth = 125E3;
-int  spreading_fuctor = 6; // 6 - 12
+int  spreading_fuctor = 8; // 6 - 12
 int tx_power = 20;  // Max 20
 int sync_word = 127;
-int coding_rate = 5; // 5,6,7,8
+int coding_rate = 1; // 1,2,3,4
 long preamble_length = 0;
 
 myLoRa * lora;
@@ -25,6 +25,6 @@ void setup() {
 
 void loop() {
   if (Serial.available() > 0) {
-    lora->lora_send( Serial.readString(), false );
+    lora->lora_send( Serial.readString(), true );
   }
 }

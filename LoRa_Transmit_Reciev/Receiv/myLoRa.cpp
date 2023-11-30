@@ -1,11 +1,14 @@
 #include "myLoRa.h"
 
 myLoRa::myLoRa( long &frequency ) {
+  Serial.println("LoRa Setup\n");
+  LoRa.setPins(PIN_SPI_SS, PIN_SPI_RST, DI00);
   while ( ! LoRa.begin(frequency) ) { 
     Serial.print(".");
     delay(1000);
   };  // GREECE: 433,050–434,040 MHz  434,040–434,790 MHz
   Serial.println( "LoRa frequency: " + String(frequency) );
+  delay(7000);
   Serial.println("LoRa Starts.\n");
 }
 
@@ -13,7 +16,7 @@ myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor,
                 int &tx_power, int &sync_word, int &coding_rate, long &preamble_length ) {
   
   Serial.println("LoRa Setup\n");
-  
+  LoRa.setPins(PIN_SPI_SS, PIN_SPI_RST, DI00);
   while ( ! LoRa.begin(frequency) ) { 
     Serial.print(".");
     delay(1000);
@@ -45,8 +48,8 @@ myLoRa::myLoRa( long &frequency, long &bandwidth, int &spreading_fuctor,
   Serial.println( "LoRa sync_word: " + String( sync_word ) );
   Serial.println( "LoRa coding_rate: " + String( coding_rate ) );
   Serial.println( "LoRa preamble_length: " + String( preamble_length ) );
-  delay(3000);
-  Serial.println( "\nLoRa Starts.\n" );
+  delay(7000);
+  Serial.println("LoRa Starts.\n");
 }
 
 String myLoRa::lora_receiving() {
